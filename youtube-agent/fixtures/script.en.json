@@ -1,0 +1,124 @@
+{
+  "title": "Why the Exchange Rate at the Counter Never Matches Online",
+  "description": "You see one exchange rate online and another at the counter. This video explains the three numbers behind it, shows a worked example with real arithmetic, and gives four steps to lose less money on every exchange.",
+  "tags": [
+    "exchange rate",
+    "currency exchange",
+    "travel money",
+    "mid-market rate",
+    "exchange fees",
+    "travel tips",
+    "foreign currency",
+    "send money abroad"
+  ],
+  "thumbnail_text": "Why the rate never matches",
+  "scenes": [
+    {
+      "id": "s1",
+      "type": "title",
+      "badge": "BEFORE YOU FLY",
+      "heading": "The rate that never matches",
+      "narration": "You check the exchange rate online, walk up to the counter, and the number is different. Here is why, and what it really costs you."
+    },
+    {
+      "id": "s2",
+      "type": "cards",
+      "heading": "Three different numbers",
+      "cards": [
+        {
+          "title": "The mid-market rate",
+          "sub": "The real price banks trade at",
+          "icon": "swap"
+        },
+        {
+          "title": "The counter rate",
+          "sub": "The mid-market rate plus a margin",
+          "icon": "percent"
+        },
+        {
+          "title": "The separate fee",
+          "sub": "Charged on top, or hidden in the rate",
+          "icon": "dollar"
+        }
+      ],
+      "narration": "There are really three numbers, not one. The mid-market rate is the price banks use between themselves, and it is the rate you see online. The counter rate adds a margin to that price, and the margin is how the counter earns money. Then there may be a separate fee on top, or one hidden inside the rate."
+    },
+    {
+      "id": "s3",
+      "type": "compare",
+      "heading": "A worked example",
+      "left": {
+        "label": "Mid-market rate",
+        "value": "17.00 pesos per dollar"
+      },
+      "right": {
+        "label": "Counter rate",
+        "value": "16.40 pesos per dollar"
+      },
+      "narration": "Say you exchange one thousand dollars into pesos. At the online rate of seventeen pesos per dollar, you would get seventeen thousand pesos. At a counter rate of sixteen forty, you get sixteen thousand four hundred."
+    },
+    {
+      "id": "s4",
+      "type": "bignumber",
+      "heading": "What the gap costs",
+      "number": "600 pesos",
+      "caption": "lost on every $1,000 exchanged",
+      "narration": "That is six hundred pesos missing, about thirty-five dollars, and no fee was ever shown on the receipt."
+    },
+    {
+      "id": "s5",
+      "type": "steps",
+      "heading": "How to lose less",
+      "steps": [
+        "Look up the mid-market rate first",
+        "Ask for the total in your currency",
+        "Compare two options before you pay",
+        "Avoid exchanging at the airport"
+      ],
+      "narration": "So how do you lose less? First, look up the mid-market rate before you go. Second, ask for the total you will receive in your own currency, not just the rate. Third, compare at least two options before you pay. And fourth, avoid airport counters unless you have no choice."
+    },
+    {
+      "id": "s6",
+      "type": "cards",
+      "heading": "Keep in mind",
+      "cards": [
+        {
+          "title": "Rates change daily",
+          "sub": "Check again on the day",
+          "icon": "swap"
+        },
+        {
+          "title": "Zero fee is not free",
+          "sub": "The margin pays for it",
+          "icon": "check"
+        }
+      ],
+      "narration": "Two last things to remember. Rates move every day, so check again on the day you exchange. And a zero fee is not free, because the margin pays for it."
+    },
+    {
+      "id": "s7",
+      "type": "outro",
+      "heading": "Do the math before you pay",
+      "narration": "You can compare any rate with our free converter and read the full guide on roamfact.com. If this was useful, subscribe for the next question in the series."
+    }
+  ],
+  "shorts": [
+    {
+      "title": "Why the exchange rate never matches",
+      "hook": "Online rate or counter rate?",
+      "scene_ids": [
+        "s3",
+        "s4"
+      ]
+    }
+  ],
+  "numbers": [
+    "17.00",
+    "16.40",
+    "$1,000",
+    "17,000",
+    "16,400",
+    "600 pesos",
+    "$35"
+  ]
+}

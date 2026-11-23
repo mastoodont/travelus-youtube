@@ -1,0 +1,5 @@
+node_modules/
+data/out/
+data/demo/
+data/manual/*
+!data/manual/.gitkeep

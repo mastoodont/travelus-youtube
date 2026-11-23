@@ -1,0 +1,59 @@
+name: YouTube-агент — каждый час (ответы, видео, публикация)
+
+on:
+  schedule:
+    - cron: "7 * * * *"        # раз в час; если репозиторий публичный, можно чаще (минуты бесплатны)
+  workflow_dispatch:
+
+permissions:
+  contents: write              # состояние + релизы с файлами видео
+
+concurrency:
+  group: youtube-agent
+  cancel-in-progress: false
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: youtube-agent/package-lock.json
+      - name: ffmpeg
+        run: command -v ffmpeg >/dev/null || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg)
+      - run: npm ci
+        working-directory: youtube-agent
+      - name: Telegram → сценарии → видео → публикация
+        working-directory: youtube-agent
+        run: node run.js tick
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          ELEVEN_VOICE_EN: ${{ secrets.ELEVEN_VOICE_EN }}
+          ELEVEN_VOICE_ES: ${{ secrets.ELEVEN_VOICE_ES }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN_EN: ${{ secrets.YT_REFRESH_TOKEN_EN }}
+          YT_REFRESH_TOKEN_ES: ${{ secrets.YT_REFRESH_TOKEN_ES }}
+          YT_PLAYLIST_EN: ${{ vars.YT_PLAYLIST_EN }}
+          YT_PLAYLIST_ES: ${{ vars.YT_PLAYLIST_ES }}
+          YT_API_VERIFIED: ${{ vars.YT_API_VERIFIED }}
+          VOICE_PROVIDER: ${{ vars.VOICE_PROVIDER }}
+          DISCLOSE_SYNTHETIC: ${{ vars.DISCLOSE_SYNTHETIC }}
+          ARTICLES_CSV_URL: ${{ vars.ARTICLES_CSV_URL }}
+          SITE_URL: ${{ vars.SITE_URL }}
+          CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL }}
+      - name: Сохранить состояние
+        if: always()
+        run: |
+          git config user.name "roamfact-agent"
+          git config user.email "agent@users.noreply.github.com"
+          git add youtube-agent/data/state.json
+          git diff --cached --quiet || (git commit -m "agent: состояние [skip ci]" && git pull --rebase && git push)

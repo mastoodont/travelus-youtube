@@ -1,0 +1,124 @@
+{
+  "title": "Por qué el tipo de cambio en el mostrador nunca coincide",
+  "description": "Ve un tipo de cambio en línea y otro en la casa de cambio. Este video explica los tres números que hay detrás, muestra un ejemplo con cuentas reales y da cuatro pasos para perder menos dinero cada vez que cambia.",
+  "tags": [
+    "tipo de cambio",
+    "casa de cambio",
+    "dinero para viajar",
+    "tasa de mercado",
+    "comisiones",
+    "envío de dinero",
+    "dólares a pesos",
+    "consejos de viaje"
+  ],
+  "thumbnail_text": "Por qué no coincide",
+  "scenes": [
+    {
+      "id": "s1",
+      "type": "title",
+      "badge": "ANTES DE VOLAR",
+      "heading": "El cambio que no coincide",
+      "narration": "Revisa el tipo de cambio en internet, llega al mostrador, y el número es otro. Le explicamos por qué y cuánto le cuesta realmente."
+    },
+    {
+      "id": "s2",
+      "type": "cards",
+      "heading": "Tres números distintos",
+      "cards": [
+        {
+          "title": "La tasa de mercado",
+          "sub": "El precio real entre bancos",
+          "icon": "swap"
+        },
+        {
+          "title": "La tasa del mostrador",
+          "sub": "La de mercado más un margen",
+          "icon": "percent"
+        },
+        {
+          "title": "La comisión aparte",
+          "sub": "Cobrada encima o escondida",
+          "icon": "dollar"
+        }
+      ],
+      "narration": "En realidad hay tres números, no uno. La tasa de mercado es el precio que usan los bancos entre sí, y es la que usted ve en línea. La tasa del mostrador le suma un margen, y de ese margen vive la casa de cambio. Y además puede haber una comisión aparte, o una escondida dentro de la tasa."
+    },
+    {
+      "id": "s3",
+      "type": "compare",
+      "heading": "Un ejemplo con cuentas",
+      "left": {
+        "label": "Tasa de mercado",
+        "value": "17.00 pesos por dólar"
+      },
+      "right": {
+        "label": "Tasa del mostrador",
+        "value": "16.40 pesos por dólar"
+      },
+      "narration": "Digamos que cambia mil dólares a pesos mexicanos. Con la tasa en línea de diecisiete pesos por dólar, recibiría diecisiete mil pesos. Con una tasa de mostrador de dieciséis cuarenta, recibe dieciséis mil cuatrocientos."
+    },
+    {
+      "id": "s4",
+      "type": "bignumber",
+      "heading": "Lo que cuesta la diferencia",
+      "number": "600 pesos",
+      "caption": "menos por cada $1,000 cambiados",
+      "narration": "Son seiscientos pesos que faltan, unos treinta y cinco dólares, y en el recibo nunca apareció una comisión."
+    },
+    {
+      "id": "s5",
+      "type": "steps",
+      "heading": "Cómo perder menos",
+      "steps": [
+        "Consulte primero la tasa de mercado",
+        "Pida el total en su moneda",
+        "Compare dos opciones antes de pagar",
+        "Evite cambiar en el aeropuerto"
+      ],
+      "narration": "Entonces, ¿cómo perder menos? Primero, consulte la tasa de mercado antes de salir. Segundo, pida el total que va a recibir en su moneda, no solo la tasa. Tercero, compare al menos dos opciones antes de pagar. Y cuarto, evite el aeropuerto salvo que no tenga alternativa."
+    },
+    {
+      "id": "s6",
+      "type": "cards",
+      "heading": "Tenga presente",
+      "cards": [
+        {
+          "title": "La tasa cambia a diario",
+          "sub": "Revise otra vez ese día",
+          "icon": "swap"
+        },
+        {
+          "title": "Comisión cero no es gratis",
+          "sub": "El margen la paga",
+          "icon": "check"
+        }
+      ],
+      "narration": "Dos cosas más para recordar. La tasa cambia todos los días, así que revísela el día que cambie. Y una comisión de cero no es gratis, porque el margen la paga."
+    },
+    {
+      "id": "s7",
+      "type": "outro",
+      "heading": "Haga las cuentas antes de pagar",
+      "narration": "Puede comparar cualquier tasa con nuestro convertidor gratuito y leer la guía completa en roamfact.com. Si le sirvió, suscríbase para la próxima pregunta de la serie."
+    }
+  ],
+  "shorts": [
+    {
+      "title": "Por qué el tipo de cambio nunca coincide",
+      "hook": "¿Tasa en línea o del mostrador?",
+      "scene_ids": [
+        "s3",
+        "s4"
+      ]
+    }
+  ],
+  "numbers": [
+    "17.00",
+    "16.40",
+    "$1,000",
+    "17,000",
+    "16,400",
+    "600 pesos",
+    "$35"
+  ]
+}

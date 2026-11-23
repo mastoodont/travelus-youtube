@@ -1,0 +1,48 @@
+name: YouTube-агент — неделя (план и сценарии)
+
+on:
+  schedule:
+    - cron: "0 4 * * 1"        # понедельник 04:00 UTC (около 06:00 по Израилю)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: youtube-agent
+  cancel-in-progress: false
+
+jobs:
+  weekly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: youtube-agent/package-lock.json
+      - run: npm ci
+        working-directory: youtube-agent
+      - name: Отчёт → тема недели → сценарии → Telegram
+        working-directory: youtube-agent
+        run: node run.js weekly
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN_EN: ${{ secrets.YT_REFRESH_TOKEN_EN }}
+          YT_REFRESH_TOKEN_ES: ${{ secrets.YT_REFRESH_TOKEN_ES }}
+          ARTICLES_CSV_URL: ${{ vars.ARTICLES_CSV_URL }}
+          SITE_URL: ${{ vars.SITE_URL }}
+          CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL }}
+      - name: Сохранить состояние
+        if: always()
+        run: |
+          git config user.name "roamfact-agent"
+          git config user.email "agent@users.noreply.github.com"
+          git add youtube-agent/data/state.json
+          git diff --cached --quiet || (git commit -m "agent: состояние [skip ci]" && git pull --rebase && git push)

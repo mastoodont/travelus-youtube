@@ -1,0 +1,22 @@
+{
+  "name": "roamfact-youtube-agent",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AI-агент для YouTube-каналов RoamFact (EN + ES): план, сценарии, озвучка, видео, публикация, аналитика",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "demo": "node run.js demo",
+    "status": "node run.js status",
+    "tick": "node run.js tick",
+    "weekly": "node run.js weekly",
+    "test": "node tests/test.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.13.0",
+    "@napi-rs/canvas": "^1.2.0",
+    "googleapis": "^190.0.0"
+  }
+}

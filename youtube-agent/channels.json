@@ -1,0 +1,49 @@
+{
+  "siteUrl": "https://www.roamfact.com",
+  "articlePath": "/{lang}/analysis/{slug}/",
+  "disclosure": {
+    "en": "Disclosure: this description may contain affiliate links to flight, money-transfer and insurance services. If you use them, we may be paid; your price does not change.",
+    "es": "Aviso: esta descripción puede contener enlaces de afiliados a servicios de vuelos, envío de dinero y seguros. Si los usa, podemos recibir una comisión; su precio no cambia."
+  },
+  "channels": {
+    "en": {
+      "handle": "@roamfact_en",
+      "languageCode": "en",
+      "siteLang": "en",
+      "audience": "English-speaking travelers from the US and people sending money abroad",
+      "tagline": "Travel smarter. Know before you go.",
+      "subscribe": "Subscribe",
+      "fullVideo": "Full video",
+      "fullGuide": "Full guide",
+      "ui": { "intro": "Intro", "outro": "Next steps", "readMore": "Read the full guide on roamfact.com" },
+      "voiceEnv": "ELEVEN_VOICE_EN",
+      "playlistEnv": "YT_PLAYLIST_EN",
+      "refreshTokenEnv": "YT_REFRESH_TOKEN_EN",
+      "categoryId": "19",
+      "publish": { "tz": "America/New_York", "time": "11:00", "longDay": 5, "short1Day": 0, "short2Day": 3 }
+    },
+    "es": {
+      "handle": "@roamfact_es",
+      "languageCode": "es",
+      "siteLang": "es",
+      "audience": "Spanish-speaking travelers and families in the US, sending money to Mexico, Central America, Colombia and the Dominican Republic",
+      "tagline": "Viaja mejor. Entérate antes de salir.",
+      "subscribe": "Suscríbete",
+      "fullVideo": "Video completo",
+      "fullGuide": "Guía completa",
+      "ui": { "intro": "Introducción", "outro": "Próximos pasos", "readMore": "Lee la guía completa en roamfact.com" },
+      "voiceEnv": "ELEVEN_VOICE_ES",
+      "playlistEnv": "YT_PLAYLIST_ES",
+      "refreshTokenEnv": "YT_REFRESH_TOKEN_ES",
+      "categoryId": "19",
+      "publish": { "tz": "America/New_York", "time": "11:00", "longDay": 5, "short1Day": 0, "short2Day": 3 }
+    }
+  },
+  "limits": {
+    "longMinWords": 200,
+    "longMaxWords": 290,
+    "shortsPerWeek": 1,
+    "shortMaxSeconds": 58,
+    "wordsPerSecond": 2.5
+  }
+}

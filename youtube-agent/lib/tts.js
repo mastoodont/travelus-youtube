@@ -1,6 +1,7 @@
 /**
  * Озвучка. Провайдер (переменная VOICE_PROVIDER):
  *   elevenlabs — ElevenLabs API, по сцене на запрос (длительности сцен точные);
+ *   google     — Google Cloud Text-to-Speech (бесплатный лимит в месяц), ключ GOOGLE_TTS_API_KEY;
  *   manual     — вы сами записали голос: положите файл data/manual/<id>_<lang>.mp3 (или .m4a/.wav),
  *                длительности сцен распределяются по числу слов;
  *   silent     — тишина нужной длины (только для проверки конвейера).
@@ -34,6 +35,27 @@ async function elevenlabs(text, voiceId, prev, next, file) {
   });
   if (!r.ok) throw new Error(`ElevenLabs ${r.status}: ${(await r.text()).slice(0, 200)}`);
   fs.writeFileSync(file, Buffer.from(await r.arrayBuffer()));
+}
+
+const GOOGLE_VOICE = { en: ["en-US", "en-US-Neural2-J"], es: ["es-US", "es-US-Neural2-B"] };
+
+async function google(text, lang, file) {
+  const key = env("GOOGLE_TTS_API_KEY");
+  if (!key) throw new Error("нет GOOGLE_TTS_API_KEY");
+  const [languageCode, def] = GOOGLE_VOICE[lang];
+  const name = env(`GOOGLE_VOICE_${lang.toUpperCase()}`, def);
+  const r = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${encodeURIComponent(key)}`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      input: { text }, voice: { languageCode, name },
+      audioConfig: { audioEncoding: "MP3", sampleRateHertz: 44100, speakingRate: Number(env("GOOGLE_SPEAKING_RATE", "1")) },
+    }),
+  });
+  if (!r.ok) throw new Error(`Google TTS ${r.status}: ${(await r.text()).slice(0, 200)}`);
+  const j = await r.json();
+  if (!j.audioContent) throw new Error("Google TTS: пустой ответ");
+  fs.writeFileSync(file, Buffer.from(j.audioContent, "base64"));
 }
 
 /** Склеивает куски в один файл: нормализация + пауза после каждой сцены */
@@ -72,7 +94,10 @@ export async function synthesize({ id, lang, scenes, dir }) {
     const s = timed[i];
     const f = path.join(dir, `scene_${s.id}.mp3`);
     if (provider === "silent" || DRY() && provider !== "elevenlabs") silence(f, Math.max(1.5, words(s.narration) / WPS));
-    else {
+    else if (provider === "google") {
+      await google(s.narration, lang, f);
+      log(`  озвучена сцена ${s.id} (${lang}, google)`);
+    } else {
       const voice = env(CHANNELS.channels[lang].voiceEnv);
       if (!voice) throw new Error(`нет ${CHANNELS.channels[lang].voiceEnv} (ID голоса ElevenLabs)`);
       await elevenlabs(s.narration, voice, timed[i - 1]?.narration?.slice(-200), timed[i + 1]?.narration?.slice(0, 200), f);

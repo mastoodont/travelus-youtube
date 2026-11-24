@@ -32,6 +32,7 @@ npm run demo    # весь конвейер на тестовых данных �
 
 ### 3. Голос
 - **ElevenLabs:** ключ → `ELEVENLABS_API_KEY`; ID двух голосов (английский и испанский, по одному на канал) → `ELEVEN_VOICE_EN`, `ELEVEN_VOICE_ES`. Один и тот же голос на канале держите всегда.
+- **Google Cloud TTS (бесплатный лимит, около 1 млн символов в месяц для голосов Neural2; нужен включённый биллинг):** в проекте Google Cloud включите **Cloud Text-to-Speech API**, создайте ключ (Credentials → Create credentials → API key) → секрет `GOOGLE_TTS_API_KEY`; переменная `VOICE_PROVIDER=google`. Голоса по умолчанию: `en-US-Neural2-J` и `es-US-Neural2-B`; сменить можно переменными `GOOGLE_VOICE_EN` / `GOOGLE_VOICE_ES` (список: https://cloud.google.com/text-to-speech/docs/voices), скорость речи — `GOOGLE_SPEAKING_RATE` (по умолчанию 1).
 - **Свой голос (надёжнее для монетизации):** переменная `VOICE_PROVIDER=manual`. Агент пришлёт сценарий, вы записываете его и кладёте файл `youtube-agent/data/manual/<id выпуска>_<en|es>.mp3` в репозиторий (id и путь агент напишет в Telegram). Длительности сцен распределяются по числу слов.
 
 ### 4. YouTube (самый длинный шаг)
@@ -56,7 +57,7 @@ GitHub → Settings → Secrets and variables → Actions.
 | Секреты | Переменные (Variables) |
 |---|---|
 | `ANTHROPIC_API_KEY`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | `ARTICLES_CSV_URL` (если есть) |
-| `ELEVENLABS_API_KEY`, `ELEVEN_VOICE_EN`, `ELEVEN_VOICE_ES` | `VOICE_PROVIDER` (`elevenlabs` или `manual`) |
+| `GOOGLE_TTS_API_KEY` (если google), `ELEVENLABS_API_KEY`, `ELEVEN_VOICE_EN`, `ELEVEN_VOICE_ES` | `VOICE_PROVIDER` (`google`, `elevenlabs`, `manual` или `silent`), `GOOGLE_VOICE_EN/ES` |
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | `YT_API_VERIFIED` (`1` после аудита, см. ниже) |
 | `YT_REFRESH_TOKEN_EN`, `YT_REFRESH_TOKEN_ES` | `YT_PLAYLIST_EN`, `YT_PLAYLIST_ES`, `SITE_URL`, `CLAUDE_MODEL`, `DISCLOSE_SYNTHETIC` |
 
@@ -71,7 +72,7 @@ Actions → «YouTube-агент — неделя» → *Run workflow*. Чере
 
 **Монетизация.** Реклама YouTube для новых каналов с 1 февраля 2027 требует 1000 подписчиков и 8000 часов просмотра длинных видео за 365 дней (или 20 млн просмотров Shorts за 90 дней). Часы Shorts в порог по часам не идут. Прогресс к порогу агент присылает в понедельничном отчёте. Правила канала: без AI-ведущих, у каждого выпуска своя конкретика и свой расчёт; факт-чек не пропускает цифры, которых нет в статье.
 
-**Синтетический голос.** При `VOICE_PROVIDER=elevenlabs` агент ставит у видео флажок «изменённый или синтетический контент» (`DISCLOSE_SYNTHETIC=0` отключает; решение остаётся за вами и правилами YouTube).
+**Синтетический голос.** При синтетическом голосе (`google`, `elevenlabs`) агент ставит у видео флажок «изменённый или синтетический контент» (`DISCLOSE_SYNTHETIC=0` отключает; решение остаётся за вами и правилами YouTube).
 
 **Минуты GitHub Actions.** Почасовой запуск тратит около 700 минут в месяц плюс сборка видео. У приватных репозиториев бесплатный лимит 2000 минут, у публичных минуты бесплатны. Нужно реже — поменяйте cron в `agent-tick.yml`.
 

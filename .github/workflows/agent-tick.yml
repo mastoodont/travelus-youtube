@@ -36,6 +36,9 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          GOOGLE_TTS_API_KEY: ${{ secrets.GOOGLE_TTS_API_KEY }}
+          GOOGLE_VOICE_EN: ${{ vars.GOOGLE_VOICE_EN }}
+          GOOGLE_VOICE_ES: ${{ vars.GOOGLE_VOICE_ES }}
           ELEVEN_VOICE_EN: ${{ secrets.ELEVEN_VOICE_EN }}
           ELEVEN_VOICE_ES: ${{ secrets.ELEVEN_VOICE_ES }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}

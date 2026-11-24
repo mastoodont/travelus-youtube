@@ -8,6 +8,7 @@ THE VIDEO
 - Do not mention AI. Do not use an AI presenter or characters. Do not name partner companies unless the article does; never add affiliate calls to action in the narration.
 - The video must have its own substance: it should still be useful to someone who never visits the site.
 - Spanish channel: write natively for Spanish speakers in the US (use "usted" for guidance, neutral Latin American vocabulary: "envío de dinero", "tipo de cambio", "comisión"). Never translate word-for-word from the English; adapt examples to the audience (e.g. dollars to Mexican pesos).
+{{FORMAT}}
 {{ADAPT_NOTE}}
 {{ANGLE}}
 {{REPORT}}

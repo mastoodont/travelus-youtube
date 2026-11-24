@@ -2,6 +2,7 @@ import { CHANNELS, LANGS, log, words } from "../lib/util.js";
 import { articleFor, loadArticles } from "../lib/articles.js";
 import { askJson, prompt } from "../lib/llm.js";
 import { fill, totalWords, validateScript } from "../lib/meta.js";
+import { FORMATS } from "../lib/formats.js";
 import { sendMessage } from "../lib/telegram.js";
 
 async function writeScript({ video, article, lang }) {
@@ -14,6 +15,7 @@ async function writeScript({ video, article, lang }) {
       LANGUAGE: lang === "en" ? "English" : "Spanish", LANG_CODE: ch.languageCode, AUDIENCE: ch.audience,
       MIN_WORDS: L.longMinWords, LONG_MINUTES: `${Math.round(L.longMinWords/L.wordsPerSecond/6)/10}–${Math.round(L.longMaxWords/L.wordsPerSecond/6)/10}`, SHORTS_COUNT: L.shortsPerWeek === 1 ? "exactly 1" : `1–${L.shortsPerWeek}`, MAX_WORDS: L.longMaxWords, SHORT_WORDS: Math.floor(L.shortMaxSeconds * L.wordsPerSecond * 0.9),
       ADAPT_NOTE: src.adapted ? "NOTE: the article exists only in another language. Do not translate it: write the script natively, reusing its facts." : "",
+      FORMAT: `${FORMATS[video.format || "explainer"].brief}${video.question ? `\nVIEWER QUESTION: ${video.question}` : ""}`,
       ANGLE: `ANGLE for this channel: ${video.plan[`angle_${lang}`] || ""}`,
       REPORT: video.guidance ? `LAST WEEK'S GUIDANCE: ${video.guidance}` : "",
       COMMENT: video.comment ? `THE OWNER ASKED FOR CHANGES TO THE PREVIOUS DRAFT: ${video.comment}\nPrevious draft title: ${video.langs[lang]?.script?.title || ""}` : "",
@@ -38,7 +40,7 @@ async function writeScript({ video, article, lang }) {
 }
 
 function scriptMessage(video) {
-  const out = [`📝 Сценарии на неделю ${video.week}\nТема: ${video.slug}\n${video.plan.reason ? "Почему: " + video.plan.reason : ""}`];
+  const out = [`📝 Сценарии на неделю ${video.week}\nТема: ${video.slug}\nФормат: ${FORMATS[video.format || "explainer"].ru}${video.question ? ` (вопрос: «${video.question}»)` : ""}\n${video.plan.reason ? "Почему: " + video.plan.reason : ""}`];
   for (const lang of LANGS) {
     const l = video.langs[lang]; if (!l) continue;
     out.push(`\n━━ ${CHANNELS.channels[lang].handle} ━━\n«${l.script.title}»  (${totalWords(l.script)} слов ≈ ${Math.round(totalWords(l.script) / CHANNELS.limits.wordsPerSecond / 60 * 10) / 10} мин)`);
@@ -65,7 +67,7 @@ export async function scriptStep(state) {
     }
     video.comment = ""; video.status = "scripted";
     await sendMessage(scriptMessage(video));
-    const mid = await sendMessage("Утвердить оба сценария? Если нужны правки — нажмите «Правка» и ответьте текстом на сообщение бота.", [[
+    const mid = await sendMessage("Утвердить оба сценария?\nПрежде чем жать, проверьте: (1) в ролике есть свой расчёт с цифрами из статьи; (2) вы сами досмотрели бы его до конца; (3) он не похож на прошлый выпуск. Слабое — правьте.\nЕсли нужны правки — нажмите «Правка» и ответьте текстом на сообщение бота.", [[
       { text: "✅ Утвердить оба", data: `ok:${video.id}` }, { text: "✏️ Правка", data: `edit:${video.id}` }]]);
     state.tg.messages[mid] = { video: video.id, kind: "script" };
   }

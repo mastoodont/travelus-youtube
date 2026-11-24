@@ -7,7 +7,8 @@ import { drop, get } from "../lib/storage.js";
 import { sendFile, sendMessage } from "../lib/telegram.js";
 import { addToPlaylist, hasCreds, upload } from "../lib/youtube.js";
 
-const syntheticVoice = () => env("VOICE_PROVIDER", "elevenlabs") !== "manual" && env("DISCLOSE_SYNTHETIC", "1") === "1";
+/** Флажок «синтетический контент» ставится ВСЕГДА, если голос не ваш (отключить нельзя: честность перед YouTube). */
+const syntheticVoice = () => env("VOICE_PROVIDER", "elevenlabs") !== "manual";
 const fmtSlot = (iso, tz) => new Date(iso).toLocaleString("ru-RU", { timeZone: tz, weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 
 function slots(lang, now = new Date()) {

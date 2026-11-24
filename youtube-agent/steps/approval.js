@@ -33,6 +33,12 @@ export async function poll(state) {
     if (!m || !allowedChat(m.chat?.id) || !m.text) continue;
     const text = m.text.trim();
     if (text === "/status" || text === "/start") { await sendMessage(statusText(state)); continue; }
+    const q = text.match(/^\/(?:q|вопрос)(?:@\w+)?\s+([\s\S]{5,400})$/i);
+    if (q) {
+      (state.questions ||= []).push(q[1].trim());
+      await sendMessage(`Вопрос сохранён (${state.questions.length} в очереди). Он пойдёт в ближайший выпуск формата «ответ на вопрос».`);
+      continue;
+    }
     const target = m.reply_to_message && state.tg.messages[m.reply_to_message.message_id];
     if (target && (target.kind === "editprompt" || target.kind === "script")) {
       const v = byId(target.video);

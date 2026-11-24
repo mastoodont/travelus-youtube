@@ -68,7 +68,7 @@ export function loadState() {
     s.videos ||= []; s.tg ||= {}; s.tg.offset ||= 0; s.tg.messages ||= {}; s.reports ||= [];
     return s;
   } catch {
-    return { videos: [], tg: { offset: 0, messages: {} }, reports: [] };
+    return { videos: [], tg: { offset: 0, messages: {} }, reports: [], questions: [] };
   }
 }
 

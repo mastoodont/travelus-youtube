@@ -26,6 +26,8 @@ export function validateScript(sc) {
     if (s.type === "bignumber" && !s.number) errs.push(`сцена ${s.id}: нет number`);
     if (s.type === "compare" && !(s.left?.value && s.right?.value)) errs.push(`сцена ${s.id}: нет left/right`);
   });
+  if (!sc.scenes.some((s) => ["bignumber", "compare", "steps"].includes(s.type))) errs.push("нужна хотя бы одна сцена bignumber, compare или steps с собственным расчётом");
+  if (!Array.isArray(sc.numbers) || !sc.numbers.length) errs.push("в numbers перечислите цифры расчёта");
   if (sc.scenes[0]?.type !== "title") errs.push("первая сцена должна быть title");
   if (sc.scenes.at(-1)?.type !== "outro") errs.push("последняя сцена должна быть outro");
   const total = sc.scenes.reduce((n, s) => n + words(s.narration), 0);

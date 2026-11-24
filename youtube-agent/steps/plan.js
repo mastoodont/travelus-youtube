@@ -1,6 +1,7 @@
 import { LANGS, log, mondayOf } from "../lib/util.js";
 import { loadArticles } from "../lib/articles.js";
 import { askJson, prompt } from "../lib/llm.js";
+import { pickFormat, FORMATS } from "../lib/formats.js";
 import { sendMessage } from "../lib/telegram.js";
 
 export async function plan(state) {
@@ -24,7 +25,8 @@ export async function plan(state) {
   });
   const slug = cand.some((a) => a.slug === res.slug) ? res.slug : cand[0].slug;
   const video = { id: `${week}-${slug}`, week, slug, status: "planned", plan: { ...res, slug }, createdAt: new Date().toISOString(), langs: {} };
+  Object.assign(video, pickFormat(state));
   state.videos.push(video);
-  log(`выбрана тема недели: ${slug} — ${res.reason || ""}`);
+  log(`выбрана тема недели: ${slug} — ${res.reason || ""}; формат: ${FORMATS[video.format].ru}`);
   return video;
 }

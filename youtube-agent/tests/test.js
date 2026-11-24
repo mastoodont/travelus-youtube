@@ -47,6 +47,17 @@ t("плохой сценарий отклоняется", () => {
   const errs = validateScript(s);
   assert.ok(errs.length >= 3, errs.join("; "));
 });
+{
+  const { pickFormat } = await import("../lib/formats.js");
+  const mk = (n, questions = []) => ({ videos: Array.from({ length: n }, () => ({})), questions });
+  assert.equal(pickFormat(mk(0)).format, "explainer");
+  assert.equal(pickFormat(mk(3)).format, "compare");
+  assert.equal(pickFormat(mk(7)).format, "example");
+  assert.equal(pickFormat(mk(11)).format, "example"); // вопросов нет → разбор на примере
+  const withQ = mk(11, ["Is it cheaper to exchange at home?"]);
+  const r = pickFormat(withQ); assert.equal(r.format, "question"); assert.equal(withQ.questions.length, 0);
+  n++; console.log("ok - форматы выпусков по кругу, вопрос зрителя берётся из очереди");
+}
 console.log(`\nвсе проверки пройдены: ${n}`);
 
 // ---------- Telegram: кнопки и правки (fetch подменён) ----------
@@ -89,5 +100,22 @@ const mkState = (status) => ({ videos: [{ id: "v1", slug: "s", week: "w", status
   queue = [{ update_id: 1, callback_query: { id: "c", data: "vok:v1", message: { chat: { id: 42 } } } }];
   await poll(st);
   assert.equal(st.videos[0].status, "ready"); n++; console.log("ok - кнопка «Публиковать» → ready");
+}
+{
+  const { pickFormat } = await import("../lib/formats.js");
+  const mk = (n, questions = []) => ({ videos: Array.from({ length: n }, () => ({})), questions });
+  assert.equal(pickFormat(mk(0)).format, "explainer");
+  assert.equal(pickFormat(mk(3)).format, "compare");
+  assert.equal(pickFormat(mk(7)).format, "example");
+  assert.equal(pickFormat(mk(11)).format, "example"); // вопросов нет → разбор на примере
+  const withQ = mk(11, ["Is it cheaper to exchange at home?"]);
+  const r = pickFormat(withQ); assert.equal(r.format, "question"); assert.equal(withQ.questions.length, 0);
+  n++; console.log("ok - форматы выпусков по кругу, вопрос зрителя берётся из очереди");
+}
+{
+  const st = mkState("scripted"); st.questions = [];
+  queue = [{ update_id: 1, message: { chat: { id: 42 }, text: "/q Как дешевле отправить деньги домой?" } }];
+  await poll(st);
+  assert.deepEqual(st.questions, ["Как дешевле отправить деньги домой?"]); n++; console.log("ok - /q сохраняет вопрос зрителя");
 }
 console.log(`\nвсе проверки пройдены: ${n}`);

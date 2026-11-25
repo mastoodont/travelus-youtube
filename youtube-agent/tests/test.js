@@ -58,6 +58,69 @@ t("плохой сценарий отклоняется", () => {
   const r = pickFormat(withQ); assert.equal(r.format, "question"); assert.equal(withQ.questions.length, 0);
   n++; console.log("ok - форматы выпусков по кругу, вопрос зрителя берётся из очереди");
 }
+{
+  // ---------- новые и обновлённые статьи, приоритеты ----------
+  process.env.MOCK_LLM = "1";
+  const { scanChanges, extractNumbers, snapshot } = await import("../lib/changes.js");
+  const art = (slug, body, extra = {}) => ({ slug, tags: "", date: "2026-01-01", updated: "", langs: { en: { title: slug, excerpt: "", body } }, ...extra });
+  const base = "Sending money costs a fee. The fee is $4 for $500. Compare providers before you send. The rate matters too.";
+  const NOW = new Date("2026-11-25T00:00:00Z");
+  t("цифры: «$1,000» = «$1000», проценты и даты", () => {
+    assert.deepEqual(extractNumbers("Pay $1,000 or $1000 (2.5%) by 2026"), ["$1000", "2.5%", "2026"].sort());
+  });
+  const st = { videos: [], reports: [] };
+  await scanChanges(st, [art("a", base), art("b", base)], NOW);
+  assert.deepEqual(Object.keys(st.pending), []); // первый запуск: архив не считается новым
+  assert.equal(Object.keys(st.articles).length, 2); n++; console.log("ok - первый запуск: снимок есть, очередь пуста");
+
+  await scanChanges(st, [art("a", base), art("b", base.replace("Compare providers", "Compare  providers,").toUpperCase())], NOW);
+  assert.deepEqual(Object.keys(st.pending), []); n++; console.log("ok - регистр, пробелы и запятые — не изменение");
+
+  await scanChanges(st, [art("a", base.replace("Compare providers", "Compare provders")), art("b", base)], NOW);
+  assert.deepEqual(Object.keys(st.pending), []); n++; console.log("ok - опечатка игнорируется");
+
+  await scanChanges(st, [art("a", base.replace("$4 for $500", "$6 for $500")), art("b", base)], NOW);
+  assert.equal(st.pending.a?.kind, "update");
+  assert.ok(st.pending.a.numbersAdded.includes("$6") && st.pending.a.numbersRemoved.includes("$4"));
+  n++; console.log("ok - изменились цифры → существенное обновление");
+
+  const fresh = art("c", base, { date: "2026-11-20" }), oldNew = art("d", base, { date: "2025-01-01" });
+  await scanChanges(st, [art("a", base.replace("$4 for $500", "$6 for $500")), art("b", base), fresh, oldNew], NOW);
+  assert.equal(st.pending.c?.kind, "new"); assert.equal(st.pending.d?.kind, "new"); // не в снимке → новые
+  n++; console.log("ok - статья, которой не было в снимке → новая");
+
+  const st2 = { videos: [], reports: [] };
+  await scanChanges(st2, [art("x", base, { date: "2026-11-20" }), art("y", base, { date: "2024-01-01" })], NOW);
+  assert.deepEqual(Object.keys(st2.pending), ["x"]); n++; console.log("ok - первый запуск: «новой» считается только свежая статья");
+
+  await scanChanges(st, [art("a", "gone")].slice(0, 0).concat([art("b", base)]), NOW);
+  assert.deepEqual(Object.keys(st.pending), []); n++; console.log("ok - удалённые с сайта темы уходят из очереди");
+
+  // ---------- выбор темы недели ----------
+  process.env.DRY_RUN = "1";
+  const { plan } = await import("../steps/plan.js");
+  const csv = path.join(ROOT, "fixtures", "articles.csv");
+  process.env.ARTICLES_CSV_PATH = csv;
+  const s1 = { videos: [], reports: [], questions: [], tg: { messages: {} } };
+  const v1 = await plan(s1);
+  assert.equal(v1.mode, "general"); assert.ok(v1.slug.startsWith("general-")); assert.ok(v1.sources.length);
+  n++; console.log("ok - нет новых/обновлённых статей → ролик на общую тему (2-й приоритет)");
+  const { articleUrl } = await import("../lib/util.js");
+  assert.match(articleUrl("en", v1.slug, "c"), /roamfact\.com\/en\/\?utm_source=youtube/);
+  n++; console.log("ok - ролик на общую тему ведёт на главную страницу языка");
+
+  const s2 = { videos: [], reports: [], questions: [], tg: { messages: {} } };
+  const rows = parseCsv(fs.readFileSync(csv, "utf8"));
+  const s2a = await (await import("../lib/articles.js")).loadArticles();
+  await scanChanges(s2, s2a, NOW);
+  s2.articles[s2a[0].slug].hash = "x"; s2.articles[s2a[0].slug].nums = ["$999"]; s2.articles[s2a[0].slug].sent = [];
+  const v2 = await plan(s2);
+  assert.equal(v2.mode, "update"); assert.equal(v2.format, "explainer"); assert.deepEqual(Object.keys(s2.pending), []);
+  n++; console.log("ok - обновлённая статья → ролик 1-го приоритета, тема уходит из очереди");
+  const v3 = await plan(s2);
+  assert.equal(v3, null); n++; console.log("ok - второй выпуск на ту же неделю не создаётся");
+  delete process.env.DRY_RUN; delete process.env.ARTICLES_CSV_PATH;
+}
 console.log(`\nвсе проверки пройдены: ${n}`);
 
 // ---------- Telegram: кнопки и правки (fetch подменён) ----------

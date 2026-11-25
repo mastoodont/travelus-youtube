@@ -4,7 +4,7 @@
  *     колонки slug, lang, title, excerpt, body, tags, minutes, status, published_at);
  *  2. ARTICLES_CSV_PATH — CSV-файл в репозитории;
  *  3. опубликованный сайт: SITE_URL/llms.txt → страницы …/index.md (их строит build.mjs).
- * Результат: [{ slug, tags, langs: { en: {title, excerpt, body}, es: {...} } }]
+ * Результат: [{ slug, tags, date, updated, langs: { en: {title, excerpt, body}, es: {...} } }]
  */
 import fs from "node:fs";
 import { CHANNELS, LANGS, env, log, parseCsv } from "./util.js";
@@ -20,8 +20,11 @@ function fromRows(rows) {
   for (const r of rows) {
     if (!r.slug || !r.lang || !LANGS.includes(r.lang)) continue;
     if (r.status && r.status.trim() && r.status.trim().toLowerCase() !== "published") continue;
-    const a = map.get(r.slug) || { slug: r.slug, tags: r.tags || "", langs: {} };
+    const a = map.get(r.slug) || { slug: r.slug, tags: r.tags || "", date: "", updated: "", langs: {} };
     a.langs[r.lang] = { title: r.title, excerpt: r.excerpt, body: r.body };
+    const d = (r.published_at || "").trim().slice(0, 10), u = (r.updated_at || "").trim().slice(0, 10);
+    if (d && (!a.date || d < a.date)) a.date = d;
+    if (u && u > a.updated) a.updated = u;
     map.set(r.slug, a);
   }
   return [...map.values()];
@@ -43,9 +46,11 @@ async function fromSite() {
   for (const e of llms) {
     if (!LANGS.includes(e.lang)) continue;
     const md = await get(`${e.base}index.md`);
+    const pub = (md.match(/^(?:Published|Опубликовано|Publicado):\s*(\d{4}-\d{2}-\d{2})/m) || [])[1] || "";
     const body = md.split("\n").filter((l) => !/^#\s|^>\s|^(Источник|Source|Fuente):|^(Опубликовано|Published|Publicado):/.test(l)).join("\n").trim();
-    const a = map.get(e.slug) || { slug: e.slug, tags: "", langs: {} };
+    const a = map.get(e.slug) || { slug: e.slug, tags: "", date: "", updated: "", langs: {} };
     a.langs[e.lang] = { title: e.title, excerpt: e.excerpt, body };
+    if (pub && (!a.date || pub < a.date)) a.date = pub;
     map.set(e.slug, a);
   }
   return [...map.values()];

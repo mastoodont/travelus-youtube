@@ -86,6 +86,10 @@ export function mondayOf(d = new Date()) {
 
 export function articleUrl(lang, slug, campaign, medium = "video") {
   const ch = CHANNELS.channels[lang];
+  // ролик на общую тему сайта (slug «general-…») ведёт на главную страницу языка, а не на одну статью
+  if (String(slug).startsWith("general-")) {
+    return `${CHANNELS.siteUrl}/${ch.siteLang}/?${new URLSearchParams({ utm_source: "youtube", utm_medium: medium, utm_campaign: campaign })}`;
+  }
   const p = CHANNELS.articlePath.replace("{lang}", ch.siteLang).replace("{slug}", slug);
   const q = new URLSearchParams({ utm_source: "youtube", utm_medium: medium, utm_campaign: campaign });
   return `${CHANNELS.siteUrl}${p}?${q}`;

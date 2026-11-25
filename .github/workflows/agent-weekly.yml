@@ -2,7 +2,7 @@ name: YouTube-агент — неделя (план и сценарии)
 
 on:
   schedule:
-    - cron: "0 4 * * 1"        # понедельник 04:00 UTC (около 06:00 по Израилю)
+    - cron: "0 4 * * 2"        # вторник 04:00 UTC (около 06:00 по Израилю)
   workflow_dispatch:
 
 permissions:
